@@ -1,5 +1,9 @@
 # Laravel Enterprise Kit
 
+<p align="center">
+  <img src="docs/assets/laravel-enterprise-kit-v0.1.svg" alt="Laravel Enterprise Kit v0.1.0 — enterprise Laravel foundation" width="100%" />
+</p>
+
 > Production-minded Laravel 13 foundation for internal tools, business systems, admin portals and enterprise applications.
 
 [![Laravel Quality](https://github.com/ayagaidi/laravel-enterprise-kit/actions/workflows/tests.yml/badge.svg)](https://github.com/ayagaidi/laravel-enterprise-kit/actions/workflows/tests.yml)
@@ -11,18 +15,21 @@ Laravel Enterprise Kit is intentionally not another CRUD demo. It starts with th
 ## v0.1 foundation
 
 - session authentication with login rate limiting
-- active/disabled user enforcement
+- active/disabled user enforcement for web and API access
 - roles and permissions with least-privilege middleware
-- immutable `super-admin` role behavior
+- protected `super-admin` privilege boundaries
+- non-super administrators cannot assign or manage `super-admin` accounts
+- last-active-super-admin lockout protection
 - user management with role assignment
 - system settings with cache invalidation
 - append-only audit trail with actor, IP, user agent and request ID
 - audit payload redaction for common secret fields
 - Laravel Sanctum personal-access-token API
 - versioned `/api/v1` routes
-- public/private settings separation
+- public/private settings separation with nested public JSON output
 - Arabic/English locale switching with RTL/LTR layout
 - Feature tests and Laravel Pint in GitHub Actions
+- committed `composer.lock` for reproducible application installs
 - demo seeding only when `SEED_ADMIN_PASSWORD` is explicitly provided
 
 ## Tech stack
@@ -78,7 +85,7 @@ Route::get('/audit-logs', [AuditLogController::class, 'index'])
     ->middleware('permission:audit.view');
 ```
 
-The `super-admin` role bypasses permission lookup by design. Other roles receive explicit permissions.
+The `super-admin` role bypasses permission lookup by design. Other roles receive explicit permissions. Assignment and management of the privileged role are restricted to existing super administrators, and the last active super administrator cannot be disabled or demoted.
 
 ## Audit design
 
@@ -110,6 +117,8 @@ GET /api/v1/me
 Authorization: Bearer <sanctum-token>
 ```
 
+Disabled users are rejected even when they still hold a syntactically valid Sanctum token.
+
 ## Quality
 
 ```bash
@@ -117,7 +126,7 @@ php artisan test
 vendor/bin/pint --test
 ```
 
-The initial suite covers authentication, disabled accounts, RBAC enforcement, audit logging, settings changes, public/private API settings, Sanctum authentication and locale switching.
+The suite covers authentication, disabled accounts, RBAC enforcement, super-admin privilege escalation, last-admin lockout protection, audit logging, settings changes, public/private API settings, Sanctum authentication and locale switching.
 
 ## Architecture
 
