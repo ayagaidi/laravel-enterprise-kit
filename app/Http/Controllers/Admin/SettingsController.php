@@ -24,8 +24,11 @@ class SettingsController extends Controller
             $current = SystemSetting::query()->where('key', $key)->firstOrFail();
             $old = $current->value;
             $updated = $settings->set($key, $value ?? '');
-            if ($old !== $updated->value) $audit->record('setting.updated', $updated, ['value' => $old], ['value' => $updated->value]);
+            if ($old !== $updated->value) {
+                $audit->record('setting.updated', $updated, ['value' => $old], ['value' => $updated->value]);
+            }
         }
+
         return back()->with('status', __('app.saved'));
     }
 }

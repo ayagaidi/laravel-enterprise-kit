@@ -13,7 +13,10 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    public function create(): View { return view('admin.login'); }
+    public function create(): View
+    {
+        return view('admin.login');
+    }
 
     public function store(Request $request, AuditService $audit): RedirectResponse
     {
@@ -26,11 +29,13 @@ class AuthController extends Controller
 
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             RateLimiter::hit($key, 60);
+
             return back()->withErrors(['email' => __('app.invalid_credentials')])->onlyInput('email');
         }
 
         if (! $request->user()->is_active) {
             Auth::logout();
+
             return back()->withErrors(['email' => __('app.account_disabled')]);
         }
 

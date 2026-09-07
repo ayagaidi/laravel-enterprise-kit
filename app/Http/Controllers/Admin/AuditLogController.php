@@ -14,6 +14,7 @@ class AuditLogController extends Controller
         $logs = AuditLog::query()->with('actor')
             ->when($request->filled('action'), fn ($q) => $q->where('action', 'like', '%'.$request->string('action').'%'))
             ->latest('created_at')->paginate(25)->withQueryString();
+
         return view('admin.audit.index', compact('logs'));
     }
 }

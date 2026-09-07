@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature;
 
 use App\Models\User;
@@ -23,8 +24,8 @@ class AdminAuthenticationTest extends TestCase
 
     public function test_disabled_user_cannot_sign_in(): void
     {
-        User::query()->create(['name'=>'Disabled','email'=>'disabled@example.test','password'=>'password1234','is_active'=>false,'locale'=>'en']);
-        $this->post('/login', ['email'=>'disabled@example.test','password'=>'password1234'])->assertSessionHasErrors('email');
+        User::query()->create(['name' => 'Disabled', 'email' => 'disabled@example.test', 'password' => 'password1234', 'is_active' => false, 'locale' => 'en']);
+        $this->post('/login', ['email' => 'disabled@example.test', 'password' => 'password1234'])->assertSessionHasErrors('email');
         $this->assertGuest();
     }
 }

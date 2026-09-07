@@ -7,7 +7,10 @@ use Illuminate\Validation\Rule;
 
 class StoreUserRequest extends FormRequest
 {
-    public function authorize(): bool { return $this->user()?->hasPermission('users.create') ?? false; }
+    public function authorize(): bool
+    {
+        return $this->user()?->hasPermission('users.create') ?? false;
+    }
 
     public function rules(): array
     {
