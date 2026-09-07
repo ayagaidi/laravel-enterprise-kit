@@ -1,7 +1,7 @@
 # Laravel Enterprise Kit
 
 <p align="center">
-  <img src="docs/assets/laravel-enterprise-kit-v0.1.svg" alt="Laravel Enterprise Kit v0.1.0 — enterprise Laravel foundation" width="100%" />
+  <img src="docs/assets/laravel-enterprise-kit-banner.jpg" alt="Laravel Enterprise Kit — secure enterprise Laravel foundation with RBAC, audit logs, settings and APIs" width="100%" />
 </p>
 
 > Production-minded Laravel 13 foundation for internal tools, business systems, admin portals and enterprise applications.
