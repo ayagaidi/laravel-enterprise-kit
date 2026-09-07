@@ -13,11 +13,9 @@ class SettingsController extends Controller
     {
         $data = [];
 
-        SystemSetting::query()
-            ->where('is_public', true)
-            ->orderBy('key')
-            ->get(['key', 'value'])
-            ->each(fn (SystemSetting $setting) => Arr::set($data, $setting->key, $setting->value));
+        foreach (SystemSetting::query()->where('is_public', true)->orderBy('key')->get(['key', 'value']) as $setting) {
+            Arr::set($data, $setting->key, $setting->value);
+        }
 
         return response()->json(['data' => $data]);
     }
