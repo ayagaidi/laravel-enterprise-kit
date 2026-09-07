@@ -18,6 +18,7 @@ abstract class TestCase extends BaseTestCase
         $ids = collect($permissions)->map(fn ($slug) => Permission::query()->firstOrCreate(['slug' => $slug], ['name' => $slug, 'group' => 'test'])->id);
         $role->permissions()->sync($ids);
         $user->roles()->sync([$role->id]);
+
         return $user;
     }
 }

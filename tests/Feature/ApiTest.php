@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature;
 
 use App\Models\SystemSetting;
@@ -12,9 +13,13 @@ class ApiTest extends TestCase
 
     public function test_public_settings_endpoint_only_returns_public_settings(): void
     {
-        SystemSetting::query()->create(['key'=>'public.key','value'=>'yes','type'=>'string','group'=>'general','is_public'=>true]);
-        SystemSetting::query()->create(['key'=>'private.key','value'=>'secret','type'=>'string','group'=>'security','is_public'=>false]);
-        $this->getJson('/api/v1/settings/public')->assertOk()->assertJsonPath('data.public.key','yes')->assertJsonMissing(['private.key'=>'secret']);
+        SystemSetting::query()->create(['key' => 'public.key', 'value' => 'yes', 'type' => 'string', 'group' => 'general', 'is_public' => true]);
+        SystemSetting::query()->create(['key' => 'private.key', 'value' => 'secret', 'type' => 'string', 'group' => 'security', 'is_public' => false]);
+
+        $this->getJson('/api/v1/settings/public')
+            ->assertOk()
+            ->assertJsonPath('data.public.key', 'yes')
+            ->assertJsonMissing(['private' => ['key' => 'secret']]);
     }
 
     public function test_profile_endpoint_requires_sanctum_authentication(): void
@@ -24,8 +29,23 @@ class ApiTest extends TestCase
 
     public function test_authenticated_api_user_can_read_profile(): void
     {
-        $user = User::query()->create(['name'=>'API User','email'=>'api@example.test','password'=>'password1234','is_active'=>true,'locale'=>'en']);
+        $user = User::query()->create(['name' => 'API User', 'email' => 'api@example.test', 'password' => 'password1234', 'is_active' => true, 'locale' => 'en']);
         $token = $user->createToken('test')->plainTextToken;
-        $this->withToken($token)->getJson('/api/v1/me')->assertOk()->assertJsonPath('data.email','api@example.test');
+
+        $this->withToken($token)
+            ->getJson('/api/v1/me')
+            ->assertOk()
+            ->assertJsonPath('data.email', 'api@example.test');
+    }
+
+    public function test_disabled_api_user_is_forbidden_even_with_a_valid_token(): void
+    {
+        $user = User::query()->create(['name' => 'Disabled API User', 'email' => 'disabled-api@example.test', 'password' => 'password1234', 'is_active' => false, 'locale' => 'en']);
+        $token = $user->createToken('test')->plainTextToken;
+
+        $this->withToken($token)
+            ->getJson('/api/v1/me')
+            ->assertForbidden()
+            ->assertJsonPath('message', 'Account disabled.');
     }
 }

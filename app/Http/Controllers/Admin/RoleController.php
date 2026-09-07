@@ -20,7 +20,7 @@ class RoleController extends Controller
 
     public function create(): View
     {
-        return view('admin.roles.form', ['role' => new Role(), 'permissions' => Permission::query()->orderBy('group')->orderBy('name')->get()->groupBy('group')]);
+        return view('admin.roles.form', ['role' => new Role, 'permissions' => Permission::query()->orderBy('group')->orderBy('name')->get()->groupBy('group')]);
     }
 
     public function store(Request $request, AuditService $audit): RedirectResponse
@@ -30,6 +30,7 @@ class RoleController extends Controller
         $role = Role::query()->create(['name' => $data['name'], 'slug' => Str::slug($data['name']), 'description' => $data['description'] ?? null]);
         $role->permissions()->sync($data['permission_ids'] ?? []);
         $audit->record('role.created', $role, [], $role->only(['name', 'slug']));
+
         return redirect()->route('admin.roles.index')->with('status', __('app.saved'));
     }
 
@@ -46,6 +47,7 @@ class RoleController extends Controller
         $role->update(['name' => $data['name'], 'description' => $data['description'] ?? null]);
         $role->permissions()->sync($data['permission_ids'] ?? []);
         $audit->record('role.updated', $role, $old, $role->only(['name', 'description']));
+
         return redirect()->route('admin.roles.index')->with('status', __('app.saved'));
     }
 }

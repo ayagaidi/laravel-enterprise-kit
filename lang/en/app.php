@@ -1,4 +1,5 @@
 <?php
+
 return [
     'dashboard' => 'Dashboard', 'users' => 'Users', 'roles' => 'Roles & Permissions', 'settings' => 'System Settings', 'audit' => 'Audit Trail',
     'login' => 'Sign in', 'logout' => 'Sign out', 'email' => 'Email', 'password' => 'Password', 'remember' => 'Remember me',

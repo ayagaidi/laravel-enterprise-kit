@@ -20,7 +20,7 @@ class UserController extends Controller
 
     public function create(): View
     {
-        return view('admin.users.form', ['user' => new User(), 'roles' => Role::query()->orderBy('name')->get()]);
+        return view('admin.users.form', ['user' => new User, 'roles' => Role::query()->orderBy('name')->get()]);
     }
 
     public function store(StoreUserRequest $request, AuditService $audit): RedirectResponse
@@ -44,7 +44,9 @@ class UserController extends Controller
         $old = $user->only(['name', 'email', 'is_active', 'locale']);
         $data = $request->safe()->except(['role_ids', 'password']);
         $data['is_active'] = $request->boolean('is_active');
-        if ($request->filled('password')) $data['password'] = $request->string('password')->toString();
+        if ($request->filled('password')) {
+            $data['password'] = $request->string('password')->toString();
+        }
         $user->update($data);
         $user->roles()->sync($request->input('role_ids', []));
         $audit->record('user.updated', $user, $old, $user->only(['name', 'email', 'is_active', 'locale']));
